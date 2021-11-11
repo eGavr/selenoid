@@ -204,6 +204,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 	for ; ; i++ {
 		r.URL.Host, r.URL.Path = u.Host, path.Join(u.Path, r.URL.Path)
 		req, _ := http.NewRequest(http.MethodPost, r.URL.String(), bytes.NewReader(body))
+		req.Host = "localhost"
 		ctx, done := context.WithTimeout(r.Context(), newSessionAttemptTimeout)
 		defer done()
 		log.Printf("[%d] [SESSION_ATTEMPTED] [%s] [%d]", requestId, u.String(), i)
@@ -473,6 +474,7 @@ func proxy(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 				r.URL.Host, r.URL.Path = sess.URL.Host, path.Clean(sess.URL.Path+r.URL.Path)
+				r.Host = "localhost"
 				return
 			}
 			r.URL.Path = paths.Error
